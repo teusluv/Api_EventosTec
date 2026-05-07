@@ -6,25 +6,6 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Cloud_Storage-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
 
-src/main/java/com/teusluv/eventostec
-├── config/           # Configurações globais (CORS, Swagger, Beans)
-├── controllers/      # Controladores REST (Entrypoints da API)
-├── domain/           # Entidades JPA e Modelos de domínio
-├── dtos/             # Data Transfer Objects (Isolamento da camada de persistência)
-├── exceptions/       # Handlers globais de erros
-├── repositories/     # Interfaces de acesso a dados (Spring Data JPA)
-├── security/         # Lógica de Filtros JWT, Provider de Autenticação e Rotas
-└── services/         # Regras de negócio, cálculos e integração externa (Supabase)
-```markdown
-# 🚀 API EventosTec - Gestão Avançada de Eventos de Tecnologia
-
-[![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Managed-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Cloud_Storage-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
-[![JWT](https://img.shields.io/badge/JWT-Auth-black?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io/)
-
 ## 📌 Visão Geral
 
 A **API EventosTec** é uma robusta solução backend RESTful desenvolvida para orquestrar o ciclo de vida completo de eventos de tecnologia. Projetada para suportar desde pequenos meetups até grandes conferências, a plataforma automatiza o cadastro de usuários, o controle rigoroso de acessos, a gestão de vagas em tempo real e o armazenamento em nuvem de mídias promocionais.
