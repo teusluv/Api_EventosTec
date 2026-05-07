@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/api/src/main/resources/db/migration/V1__create.evento-table.sql" value="dca6afd9-6861-4381-985e-bba84f948fc6" />
+  </component>
+</project>

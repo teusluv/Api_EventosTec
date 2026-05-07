@@ -1,6 +1,7 @@
 package com.eventostec.api.domain.address;
 
 import com.eventostec.api.domain.evento.Event;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,14 +19,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     private String city;
     private String uf;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "envent_id")
+    @JoinColumn(name = "event_id")
     private Event event;
 
 

@@ -1,5 +1,6 @@
 package com.eventostec.api.domain.evento;
 
+import com.eventostec.api.domain.address.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,11 @@ public class Event {
     private String title;
     private String description;
     private String imgUrl;
+    private String eventUrl;
     private Boolean remote;
     private Date date;
+
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
+    private Address address;
 }
 
