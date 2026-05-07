@@ -6,28 +6,83 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Cloud_Storage-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
 
-## 📌 Sobre o Projeto
+src/main/java/com/teusluv/eventostec
+├── config/           # Configurações globais (CORS, Swagger, Beans)
+├── controllers/      # Controladores REST (Entrypoints da API)
+├── domain/           # Entidades JPA e Modelos de domínio
+├── dtos/             # Data Transfer Objects (Isolamento da camada de persistência)
+├── exceptions/       # Handlers globais de erros
+├── repositories/     # Interfaces de acesso a dados (Spring Data JPA)
+├── security/         # Lógica de Filtros JWT, Provider de Autenticação e Rotas
+└── services/         # Regras de negócio, cálculos e integração externa (Supabase)
+```markdown
+# 🚀 API EventosTec - Gestão Avançada de Eventos de Tecnologia
 
-A **API EventosTec** é uma solução backend robusta e escalável desenvolvida para a gestão completa de eventos de tecnologia. O sistema foi concebido para centralizar desde o registo de utilizadores até à organização logística de eventos, incluindo o armazenamento de média em nuvem e controlo rigoroso de acessos.
+[![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Managed-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Cloud_Storage-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white)](https://spring.io/projects/spring-security)
+[![JWT](https://img.shields.io/badge/JWT-Auth-black?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io/)
 
-Esta API foi construída seguindo as melhores práticas de desenvolvimento, como **Clean Code**, **S.O.L.I.D.** e **Arquitetura em Camadas**, garantindo uma manutenção facilitada e alta performance.
+## 📌 Visão Geral
+
+A **API EventosTec** é uma robusta solução backend RESTful desenvolvida para orquestrar o ciclo de vida completo de eventos de tecnologia. Projetada para suportar desde pequenos meetups até grandes conferências, a plataforma automatiza o cadastro de usuários, o controle rigoroso de acessos, a gestão de vagas em tempo real e o armazenamento em nuvem de mídias promocionais.
+
+O sistema foi construído aplicando princípios de **Clean Code**, **S.O.L.I.D.** e **Arquitetura em Camadas**, refletindo mais de 2 anos de experiência prática em engenharia de software e garantindo integração fluida com aplicações frontend modernas.
 
 ---
 
-## ✨ Funcionalidades Principais
+## ✨ Funcionalidades Principais (Regras de Negócio)
 
-### 🔒 Segurança e Autenticação
-* **Autenticação Stateless com JWT:** Implementação de tokens JSON Web Token para gestão de sessões seguras.
-* **Controlo de Acesso (RBAC):** Diferenciação de permissões entre `ROLE_ADMIN` (gestores) e `ROLE_USER` (participantes).
-* **Criptografia:** Utilização de BCrypt para o hashing de passwords antes da persistência no banco de dados.
+### 👤 Gestão de Usuários & Acesso
+*   **Role-Based Access Control (RBAC):** Diferenciação clara entre `ROLE_ADMIN` (organizadores com permissão total) e `ROLE_USER` (participantes).
+*   **Autenticação Stateless:** Implementação de tokens JWT (JSON Web Tokens) para sessões seguras e escaláveis.
+*   **Self-Registration:** Fluxo simplificado e protegido para novos participantes criarem suas contas.
 
 ### 📅 Gestão de Eventos
-* **CRUD de Eventos:** Criação, leitura, atualização e remoção de eventos tecnológicos.
-* **Upload de Banners:** Integração direta com o **Supabase Storage** para upload e armazenamento de imagens promocionais dos eventos.
-* **Gestão de Lotação:** Controlo automático de vagas disponíveis por evento.
+*   **CRUD de Eventos:** Organizadores podem criar, editar e excluir eventos, detalhando data, local, descrição e limite de vagas.
+*   **Upload de Banners:** Integração direta com os buckets do **Supabase Storage** para processamento de imagens `multipart/form-data`, retornando URLs públicas otimizadas persistidas no banco.
+*   **Filtros de Busca:** Listagem inteligente de eventos ativos com paginação para otimização de performance.
 
-### 🎟 Inscrições e Participação
-* **Fluxo de Inscrição:** Registo de utilizadores em eventos com validação de duplicidade e disponibilidade.
-* **Consulta de Perfil:** Endpoints para os utilizadores consultarem os eventos em que estão inscritos.
+### 🎟 Sistema de Inscrições
+*   **Controle de Lotação:** Validação automática da disponibilidade de vagas no momento exato da inscrição.
+*   **Prevenção de Duplicidade:** Lógica de negócio dedicada a impedir que um usuário se inscreva múltiplas vezes no mesmo evento.
+*   **Histórico de Participação:** Endpoint para o usuário consultar seus eventos confirmados.
 
 ---
+
+## ⚙️ Arquitetura e Segurança
+
+*   **Padrão MVC:** Separação estrita entre `Controllers` (exposição da API), `Services` (regras de negócio) e `Repositories` (persistência).
+*   **Filtros de Segurança:** Interceptação de requisições via Spring Security para validar a integridade do JWT. Senhas são transformadas em hash com salt utilizando `BCryptPasswordEncoder`.
+*   **Prevenção de Problemas N+1:** Otimização de consultas utilizando o Spring Data JPA.
+*   **Global Exception Handling:** Uso de `@ControllerAdvice` para tratar erros de forma elegante e retornar códigos HTTP padronizados (400, 401, 403, 404, 500).
+*   **DTOs (Data Transfer Objects):** Camada de abstração garantindo que dados sensíveis não sejam expostos e validando entradas com `Hibernate Validator`.
+
+---
+
+## 🛠 Tecnologias e Ferramentas
+
+*   **Backend:** Java 17+, Spring Boot 3.x
+*   **Segurança:** Spring Security, JWT (JSON Web Tokens)
+*   **Persistência de Dados:** Spring Data JPA, Hibernate
+*   **Bancos de Dados:** PostgreSQL (suporte configurável para MySQL)
+*   **Cloud Storage:** Supabase
+*   **Gerenciamento de Dependências:** Maven
+
+---
+
+## 🚀 Guia de Instalação e Execução
+
+### Pré-requisitos
+*   JDK 17 ou superior
+*   Maven 3.8+
+*   PostgreSQL rodando localmente (ou via Docker)
+*   Conta no Supabase (com um bucket público criado, ex: `eventos-banners`)
+
+### 1. Clonar o Repositório
+```bash
+git clone https://github.com/teusluv/Api_EventosTec.git
+cd Api_EventosTec
+
