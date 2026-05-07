@@ -1,3 +1,6 @@
+## 📂 Estrutura de Diretórios
+
+```text
 src/main/java/com/teusluv/eventostec
 ├── config/           # Configurações globais (CORS, Swagger, Beans)
 ├── controllers/      # Controladores REST (Entrypoints da API)
@@ -7,7 +10,7 @@ src/main/java/com/teusluv/eventostec
 ├── repositories/     # Interfaces de acesso a dados (Spring Data JPA)
 ├── security/         # Lógica de Filtros JWT, Provider de Autenticação e Rotas
 └── services/         # Regras de negócio, cálculos e integração externa (Supabase)
-```markdown
+
 # 🚀 API EventosTec - Gestão Avançada de Eventos de Tecnologia
 
 [![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
