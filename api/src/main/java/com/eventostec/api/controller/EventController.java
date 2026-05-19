@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/event")
+@CrossOrigin(origins = "*")
 public class EventController {
 
     @Autowired
@@ -52,5 +53,11 @@ public class EventController {
     public ResponseEntity<EventDetailsDTO> getEventDetails(@PathVariable UUID eventId) {
         EventDetailsDTO eventDetailsDTO = eventService.getEventDetails(eventId);
         return ResponseEntity.ok(eventDetailsDTO);
+    }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable UUID eventId) {
+        this.eventService.deleteEvent(eventId);
+        return ResponseEntity.noContent().build();
     }
 }

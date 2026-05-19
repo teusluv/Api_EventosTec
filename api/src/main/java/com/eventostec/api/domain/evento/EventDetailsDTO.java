@@ -13,6 +13,7 @@ public record EventDetailsDTO(
         String uf,
         String imgUrl,
         String eventUrl,
+        Integer price,
         List<CouponDTO> coupons) {
 
     public record CouponDTO(

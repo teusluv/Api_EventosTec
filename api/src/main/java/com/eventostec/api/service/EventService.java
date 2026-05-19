@@ -8,6 +8,7 @@ import com.eventostec.api.domain.evento.EventDetailsDTO;
 import com.eventostec.api.domain.evento.EventRequestDTO;
 import com.eventostec.api.domain.evento.EventResponseDTO;
 import com.eventostec.api.repository.AddressRepository;
+import com.eventostec.api.repository.CouponRepository;
 import com.eventostec.api.repository.EventRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class EventService {
     private AddressRepository addressRepository;
 
     @Autowired
+    private CouponRepository couponRepository;
+
+    @Autowired
     private AddressService addressService;
 
     @Autowired
@@ -77,6 +81,7 @@ public class EventService {
         }
         newEvent.setImgUrl(imgUrl);
         newEvent.setRemote(data.remote());
+        newEvent.setPrice(data.price());
 
         repository.save(newEvent);
 
@@ -103,7 +108,8 @@ public class EventService {
                     event.getAddress() != null ? event.getAddress().getCity(): "",
                     event.getAddress() != null ? event.getAddress().getUf(): "",
                     event.getRemote(),
-                    event.getImgUrl()
+                    event.getImgUrl(),
+                    event.getPrice()
             );
         }).stream().toList();
     }
@@ -132,7 +138,8 @@ public class EventService {
                     address != null ? address.getCity() : "",
                     address != null ? address.getUf() : "",
                     event.getRemote(),
-                    event.getImgUrl()
+                    event.getImgUrl(),
+                    event.getPrice()
             );
         }).toList();
     }
@@ -159,8 +166,29 @@ public class EventService {
                 event.getAddress() != null ? event.getAddress().getUf() : "",
                 event.getImgUrl(),
                 event.getEventUrl(),
+                event.getPrice(),
                 couponDTOs
         );
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteEvent(UUID eventId) {
+        Event event = repository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        
+        // 1. Delete coupons referencing this event
+        List<Coupon> coupons = couponRepository.findByEventId(eventId);
+        if (coupons != null && !coupons.isEmpty()) {
+            couponRepository.deleteAll(coupons);
+        }
+
+        // 2. Delete addresses referencing this event
+        addressRepository.findByEventId(eventId).ifPresent(address -> {
+            addressRepository.delete(address);
+        });
+
+        // 3. Delete the event
+        repository.delete(event);
     }
 
     private String uploadImg(MultipartFile image) {
@@ -168,9 +196,27 @@ public class EventService {
             SupabaseStorageService storageService = new SupabaseStorageService();
             return storageService.fazerUpload(image);
         } catch (Exception e) {
-            System.out.println("Error while uploading file: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            System.out.println("Supabase upload failed, falling back to local storage: " + e.getMessage());
+            try {
+                File uploadDir = new File("uploads");
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                
+                String originalName = image.getOriginalFilename();
+                String cleanName = originalName != null ? originalName.replaceAll("[\\s()]", "_") : "imagem.jpg";
+                String fileName = System.currentTimeMillis() + "-" + cleanName;
+                
+                File destFile = new File(uploadDir, fileName);
+                image.transferTo(destFile);
+                
+                System.out.println("File saved locally: " + destFile.getAbsolutePath());
+                return "http://localhost:8080/uploads/" + fileName;
+            } catch (Exception localEx) {
+                System.out.println("Error while saving file locally: " + localEx.getMessage());
+                localEx.printStackTrace();
+                return null;
+            }
         }
     }
 

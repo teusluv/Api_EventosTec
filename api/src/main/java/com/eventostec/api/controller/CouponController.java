@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/coupon")
+@CrossOrigin(origins = "*")
 public class CouponController {
 
     @Autowired
