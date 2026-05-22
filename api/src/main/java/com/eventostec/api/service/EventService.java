@@ -77,7 +77,7 @@ public class EventService {
         newEvent.setEventUrl(data.eventUrl());
         if (data.date() != null) {
             long timestamp = data.date();
-            if (timestamp < 10000000000L) { // Se for em segundos (10 dígitos), converte pra milissegundos
+            if (timestamp < 10000000000L) { 
                 timestamp *= 1000L;
             }
             newEvent.setDate(new Date(timestamp));
@@ -127,7 +127,7 @@ public class EventService {
         uf = (uf != null) ? uf : "";
         
         if (startDate == null) startDate = new Date(0);
-        if (endDate == null) endDate = new Date(9100000000000000L); // Data máxima segura para o PostgreSQL (aprox. ano 288.000)
+        if (endDate == null) endDate = new Date(9100000000000000L); 
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -297,8 +297,8 @@ public class EventService {
 
     public class SupabaseStorageService {
 
-        private final String SUPABASE_URL = "https://ybuydpfqjnckewumxjxz.supabase.co";
-        private final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidXlkcGZxam5ja2V3dW14anh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Nzk5ODM3NSwiZXhwIjoyMDkzNTc0Mzc1fQ.mc6iFxkCquTvwjk_juVeYEg7sm-3catcQWwu9qCjTlI";
+        private final String SUPABASE_URL = "";
+        private final String SUPABASE_KEY = "";
         private final String BUCKET_NAME = "Imagem_Url";
 
         public String fazerUpload(MultipartFile arquivo) throws Exception {
