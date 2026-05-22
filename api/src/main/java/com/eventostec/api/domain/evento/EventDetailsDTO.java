@@ -13,13 +13,28 @@ public record EventDetailsDTO(
         String uf,
         String imgUrl,
         String eventUrl,
-        Integer price,
-        List<CouponDTO> coupons) {
+        Double price,
+        List<CouponDTO> coupons,
+        List<SpeakerDTO> speakers,
+        List<AgendaDTO> agenda) {
 
     public record CouponDTO(
             UUID id,
             String code,
             Integer discount,
             Date valid) {
+    }
+
+    public record SpeakerDTO(
+            String name,
+            String role,
+            String image,
+            String profileUrl) {
+    }
+
+    public record AgendaDTO(
+            String time,
+            String title,
+            String description) {
     }
 }

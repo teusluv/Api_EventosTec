@@ -28,7 +28,13 @@ public class Event {
     private String eventUrl;
     private Boolean remote;
     private Date date;
-    private Integer price;
+    private Double price;
+
+    @Column(name = "speakers_json", columnDefinition = "TEXT")
+    private String speakersJson;
+
+    @Column(name = "agenda_json", columnDefinition = "TEXT")
+    private String agendaJson;
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     private Address address;

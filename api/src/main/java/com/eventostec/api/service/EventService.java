@@ -36,6 +36,9 @@ import javax.annotation.processing.Generated;
 
 import static java.util.Arrays.stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 @Service
 @Setter
 public class EventService {
@@ -79,9 +82,14 @@ public class EventService {
             }
             newEvent.setDate(new Date(timestamp));
         }
+        if (imgUrl == null || imgUrl.isEmpty()) {
+            imgUrl = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80";
+        }
         newEvent.setImgUrl(imgUrl);
         newEvent.setRemote(data.remote());
         newEvent.setPrice(data.price());
+        newEvent.setSpeakersJson(data.speakers());
+        newEvent.setAgendaJson(data.agenda());
 
         repository.save(newEvent);
 
@@ -143,6 +151,28 @@ public class EventService {
             );
         }).toList();
     }
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private List<EventDetailsDTO.SpeakerDTO> parseSpeakers(String json) {
+        if (json == null || json.isEmpty()) return Collections.emptyList();
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<EventDetailsDTO.SpeakerDTO>>() {});
+        } catch (Exception e) {
+            System.err.println("Failed to parse speakers JSON: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    private List<EventDetailsDTO.AgendaDTO> parseAgenda(String json) {
+        if (json == null || json.isEmpty()) return Collections.emptyList();
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<EventDetailsDTO.AgendaDTO>>() {});
+        } catch (Exception e) {
+            System.err.println("Failed to parse agenda JSON: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     public EventDetailsDTO getEventDetails(UUID eventId) {
         Event event = repository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
@@ -167,7 +197,9 @@ public class EventService {
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getPrice(),
-                couponDTOs
+                couponDTOs,
+                parseSpeakers(event.getSpeakersJson()),
+                parseAgenda(event.getAgendaJson())
         );
     }
 
@@ -175,20 +207,63 @@ public class EventService {
     public void deleteEvent(UUID eventId) {
         Event event = repository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        repository.delete(event);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public Event updateEvent(UUID eventId, EventRequestDTO data) {
+        Event event = repository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        event.setTitle(data.title());
+        event.setDescription(data.description());
+        event.setEventUrl(data.eventUrl());
         
-        // 1. Delete coupons referencing this event
-        List<Coupon> coupons = couponRepository.findByEventId(eventId);
-        if (coupons != null && !coupons.isEmpty()) {
-            couponRepository.deleteAll(coupons);
+        if (data.date() != null) {
+            long timestamp = data.date();
+            if (timestamp < 10000000000L) {
+                timestamp *= 1000L;
+            }
+            event.setDate(new Date(timestamp));
         }
 
-        // 2. Delete addresses referencing this event
-        addressRepository.findByEventId(eventId).ifPresent(address -> {
-            addressRepository.delete(address);
-        });
+        if (data.image() != null && !data.image().isEmpty()) {
+            String imgUrl = this.uploadImg(data.image());
+            if (imgUrl != null && !imgUrl.isEmpty()) {
+                event.setImgUrl(imgUrl);
+            }
+        }
+        
+        event.setRemote(data.remote());
+        event.setPrice(data.price());
+        
+        if (data.speakers() != null) {
+            event.setSpeakersJson(data.speakers());
+        }
+        if (data.agenda() != null) {
+            event.setAgendaJson(data.agenda());
+        }
 
-        // 3. Delete the event
-        repository.delete(event);
+        // Handle Address
+        if (data.remote()) {
+            Address address = event.getAddress();
+            if (address != null) {
+                addressRepository.delete(address);
+                event.setAddress(null);
+            }
+        } else {
+            Address address = event.getAddress();
+            if (address == null) {
+                address = new Address();
+                address.setEvent(event);
+            }
+            address.setCity(data.city());
+            address.setUf(data.uf().toUpperCase());
+            addressRepository.save(address);
+            event.setAddress(address);
+        }
+
+        return repository.save(event);
     }
 
     private String uploadImg(MultipartFile image) {

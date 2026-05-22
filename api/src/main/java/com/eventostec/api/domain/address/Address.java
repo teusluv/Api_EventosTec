@@ -26,7 +26,7 @@ public class Address {
     private String uf;
 
     @JsonIgnore
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "event_id")
     private Event event;
 

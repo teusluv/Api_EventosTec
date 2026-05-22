@@ -31,6 +31,12 @@ public class EventController {
         return ResponseEntity.ok(newEvent);
     }
 
+    @PutMapping(value = "/{eventId}", consumes = "multipart/form-data")
+    public ResponseEntity<Event> update(@PathVariable UUID eventId, @ModelAttribute EventRequestDTO data) {
+        Event updatedEvent = this.eventService.updateEvent(eventId, data);
+        return ResponseEntity.ok(updatedEvent);
+    }
+
     @GetMapping
     public ResponseEntity<List<EventResponseDTO>> getEventos(@RequestParam(defaultValue = "0" ) int page, @RequestParam(defaultValue = "10" ) int size) {
         List<EventResponseDTO> allEvents = this.eventService.getUpcomingEvents(page, size);
